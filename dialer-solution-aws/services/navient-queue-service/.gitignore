@@ -1,0 +1,6 @@
+node_modules
+config/*.env
+config/*.pfx
+dist
+.DS_Store
+*.pfx

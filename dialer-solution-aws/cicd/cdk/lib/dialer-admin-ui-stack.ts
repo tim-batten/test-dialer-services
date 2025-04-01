@@ -21,7 +21,7 @@ export class DialerAdminUiStack extends cdk.Stack {
     const { domain, subdomain, certificateArn } = props || {};
     // Create the S3 bucket for static react assets
     const bucket = new s3.Bucket(this, 'DialerUiBucket', {
-      bucketName: `lcme-aws-dialer-frontend-${this.account}-${this.region}`,
+      bucketName: `navient-aws-dialer-frontend-${this.account}-${this.region}`,
       publicReadAccess: false,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
@@ -95,7 +95,7 @@ export class DialerAdminUiStack extends cdk.Stack {
 
     // Deploy the static react assets to the S3 bucket
     const sourceAssets = new s3Deploy.BucketDeployment(this, 'UiBucketDeployment', {
-      sources: [s3Deploy.Source.asset('../../ui/lcme-web/build')],
+      sources: [s3Deploy.Source.asset('../../ui/navient-web/build')],
       destinationBucket: bucket,
       distribution: cloudfrontDistribution,
     });

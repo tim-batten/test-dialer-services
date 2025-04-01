@@ -1,7 +1,7 @@
 
-# lcme-UI
+# Navient-UI
 
-UI For lcme Project
+UI For Navient Project
 
 
 ## Run Locally
@@ -9,13 +9,13 @@ UI For lcme Project
 Clone the project
 
 ```bash
-  git clone git@bitbucket.org:waterfieldtech/lcme-ui.git
+  git clone git@bitbucket.org:waterfieldtech/navient-ui.git
 ```
 
 Go to the project directory
 
 ```bash
-  cd lcme-ui
+  cd navient-ui
 ```
 
 Install dependencies Automatically
@@ -28,11 +28,11 @@ Install dependencies Manually (Recomended)
 
 ```bash
   npm install -f
-  cd lcme-lib
+  cd navient-lib
   npm install -f
   npm run build:dev
   cd ..
-  cd lcme-plugin
+  cd navient-plugin
   npm install -f
   cd ..
 ```
@@ -51,10 +51,10 @@ Start the Web App
   npm run web-start
 ```
 ## Troubleshooting
-lcmePlugin.tsx: 'SchedulerView' cannot be used as a JSX component.
+NavientPlugin.tsx: 'SchedulerView' cannot be used as a JSX component.
 
 Run:
 ```bash
-  cd lcme-lib
+  cd navient-lib
   npm install
 ```

@@ -138,7 +138,7 @@ server:
 # Config for the CRUD API
 # MANDATORY for most services
 crudApi:
-    # The address of lcme's CRUD API for fetching from the cache
+    # The address of Navient's CRUD API for fetching from the cache
     # MANDATORY
     crudApiUrl: "http://example.com"
 
@@ -332,7 +332,7 @@ configApiService:
         # enabled: false
 
         # The path to the web UI source code
-        # Default: <lcme-config-api-service-source-dir>/web-ui
+        # Default: <navient-config-api-service-source-dir>/web-ui
         # sourcePath: /path/to/web-ui
 
         # The URI path to serve the web UI from
@@ -415,7 +415,7 @@ configApiService:
         # Skips sending filter create/update/delete to remote service; only creates in Redis
         # Skips sending phone number friendly name request
         # OPTIONAL
-        # skiplcmeCrud: false
+        # skipNavientCrud: false
 
         # Skips update conflict checks
         # OPTIONAL
@@ -504,6 +504,23 @@ queueService:
         # This is specified in milliseconds or can be supplied as a human readable string in quotes (e.g. "1 second")
         # Default: 500
         # batchProcessOutboundContactCompletionFrequency: 500
+
+        # How frequently to check for contacts that have been in the ring state for too long
+        # (Note: Will only perform this check if MaxRingTime is set in the DB DialerDefaults)
+        # This is specified in milliseconds or can be supplied as a human readable string in quotes (e.g. "1 second")
+        # Default: 1000
+        # OPTIONAL
+        # ringTimeoutCheckFrequency: 1000
+
+        # The maximum number of contacts that we can hang up per iteration of the ring timeout check
+        # Default: 10
+        # OPTIONAL
+        # maxRingTimeoutHangupsPerLoop: 10
+
+        # Whether to check AWS' view of the contact before completing it (uses DescribeContact API for each contact)
+        # Default: true
+        # OPTIONAL
+        # checkContactBeforeCompletion: true
         
     # Various dev flags - not used in production
     # OPTIONAL
@@ -577,3 +594,11 @@ statsService:
             # keyFilePath: "/path/to/key.pem"
             # certFilePath: "/path/to/cert.pem"
         # isHttpEnabled: false
+
+    # dev:
+        # Does not listen for contact events from AWS but instead generates them. This has the same name as the variable in the Queue
+        # service as, if enabled, it should be enabled on both
+        # OPTIONAL
+        # skipFlowExecution: false
+
+        

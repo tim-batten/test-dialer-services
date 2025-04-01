@@ -1,0 +1,1 @@
+export { CustomEvent } from './CustomEvent';

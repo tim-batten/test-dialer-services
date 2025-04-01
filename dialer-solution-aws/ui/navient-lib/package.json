@@ -1,0 +1,98 @@
+{
+  "name": "@navient/common",
+  "version": "1.7.0",
+  "description": "",
+  "author": "",
+  "license": "",
+  "repository": "",
+  "source": "index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "dev": "nodemon --ignore ./dist/ --exec npm run build:dev",
+    "build:dev": "cross-env NODE_ENV=development webpack --stats=minimal && tsc --declaration",
+    "build:prod": "cross-env NODE_ENV=production webpack && tsc --project tsconfig.json",
+    "prepack": "npm run build"
+  },
+  "watch": {
+    "build:dev": {
+      "patterns": [
+        "src"
+      ],
+      "extensions": "ts,js,tsx,jsx",
+      "ignore": [
+        "dist",
+        "node_modules"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "react": "^16.13.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "@babel/preset-react": "^7.14.5",
+    "@babel/preset-typescript": "^7.15.0",
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.60",
+    "@mui/x-data-grid": "^4.0.1",
+    "@types/lodash": "^4.14.173",
+    "@types/node": "^16.11.1",
+    "@types/react": "^16.9.41",
+    "@types/react-beautiful-dnd": "^13.1.2",
+    "@types/react-big-calendar": "^0.36.1",
+    "axios": "^0.24.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.5.1",
+    "emotion": "^9.2.12",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-config-standard-react": "^9.2.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-standard": "^4.0.1",
+    "formik": "^2.2.9",
+    "formik-material-ui": "^3.0.1",
+    "formik-material-ui-lab": "0.0.8",
+    "moment-timezone": "^0.5.33",
+    "navient-common": "file:../../navient-common",
+    "nodemon": "^3.0.1",
+    "prettier": "^2.0.4",
+    "react": "^16.13.1",
+    "react-beautiful-dnd": "^13.1.0",
+    "react-big-calendar": "^0.38.0",
+    "react-contexify": "^5.0.0",
+    "react-dom": "^16.13.1",
+    "react-emotion": "^9.2.12",
+    "recharts": "^2.1.6",
+    "rrule": "2.7.2",
+    "style-loader": "^3.3.1",
+    "terser-webpack-plugin": "^5.2.4",
+    "ts-loader": "^7.0.5",
+    "typescript": "^3.9.5",
+    "webpack": "^5.59.1",
+    "webpack-cli": "^4.9.1",
+    "yup": "^0.32.11"
+  },
+  "dependencies": {
+    "@material-table/core": "^4.3.44",
+    "ag-grid-community": "^29.3.3",
+    "ag-grid-react": "^29.3.3",
+    "antd": "^4.18.2",
+    "lodash": "^4.17.21",
+    "object-hash": "^2.2.0",
+    "pubsub-js": "^1.9.4",
+    "react-awesome-query-builder": "^4.8.0",
+    "react-draggable": "^4.4.5",
+    "react-json-view": "^1.21.3"
+  }
+}

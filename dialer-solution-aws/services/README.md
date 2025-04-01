@@ -1,6 +1,6 @@
-# lcme Dialer Backend Services
+# Navient Dialer Backend Services
 
-This repository contains all of the backend services for the lcme Dialer project. There are 5 main services:
+This repository contains all of the backend services for the Navient Dialer project. There are 5 main services:
 
 * Schedule Service
 * Campaign Manager
@@ -8,7 +8,7 @@ This repository contains all of the backend services for the lcme Dialer project
 * Stats Service
 * Config API Service
 
-There is also a library of common code found in lcme-services-common.
+There is also a library of common code found in navient-services-common.
 
 Each service has its own README with more information specific to that service.
 
@@ -18,14 +18,14 @@ As all of the code is in TypeScript, it needs to be transpiled to JavaScript bef
 
 The same build instructions apply to each service.
 
-1. Build lcme-services-common
+1. Build navient-services-common
 2. Build the service(s)
 
 To build any component, first go into its directory. You must first ensure that all dependencies are installed. Run `npm i`. Now go into its directory and run `npm run build`
 
-If you're planning on making code changes and want to automatically build new files, you can also run `npm run watch`. Ensure you run this on both lcme-services-common and the service you are making changes to.
+If you're planning on making code changes and want to automatically build new files, you can also run `npm run watch`. Ensure you run this on both navient-services-common and the service you are making changes to.
 
-*Note: If making changes to lcme-services-common, running `npm run watch` will rebuild lcme-services-common however it will not trigger a rebuild of any services that `npm run watch` is being built against and `npm run watch` will need to be stopped and started on any services that are currently being worked on*
+*Note: If making changes to navient-services-common, running `npm run watch` will rebuild navient-services-common however it will not trigger a rebuild of any services that `npm run watch` is being built against and `npm run watch` will need to be stopped and started on any services that are currently being worked on*
 
 ## Configuration
 
@@ -47,15 +47,15 @@ The simplest way to get any service running is to setup a dev.env file, then in 
 
 ## Example build and run
 
-Say you've just pulled the lcme-schedule-service and now you want to run it:
+Say you've just pulled the navient-schedule-service and now you want to run it:
 
-Go into lcme-schedule-service/config, copy ENV_SAMPLE to dev.env, then fill out the config. Now build and run:
+Go into navient-schedule-service/config, copy ENV_SAMPLE to dev.env, then fill out the config. Now build and run:
 
 ```
-cd lcme-services-common
+cd navient-services-common
 npm i
 npm run build
-cd ../lcme-schedule-service
+cd ../navient-schedule-service
 npm i
 npm run build
 npm run dev
@@ -67,7 +67,7 @@ npm run dev
 * For further todo/missing features information see each component's README file
 
 ## How to set up & run services:
-1. Clone the repo: `git clone https://mepc36@bitbucket.org/waterfieldtech/lcme-services.git`.
+1. Clone the repo: `git clone https://mepc36@bitbucket.org/waterfieldtech/navient-services.git`.
 2. Go into all service folders and install dependencies by running `npm install`.
 3. Go into all service folders and compile the TypeScript into JavaScript by running `npm run build`. For hot reload watch mode, run `npm run watch` instead.
 4. Copy `~/global-config/global-config.sample` to `~/global-config/global-config.yaml.`.

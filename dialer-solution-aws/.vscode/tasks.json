@@ -1,0 +1,215 @@
+{
+  "version": "2.0.0",
+  "presentation": {
+    "echo": false,
+    "reveal": "always",
+    "focus": false,
+    "panel": "dedicated",
+    "showReuseMessage": true
+  },
+    "options": {
+    "shell": {
+      "executable": "${env:ComSpec}", // Default to cmd.exe on Windows
+      "args": []
+    }
+  },
+  "windows": {
+    "options": {
+      "shell": {
+        "executable": "${env:ComSpec}",
+        "args": []
+      }
+    }
+  },
+  "osx": {
+    "options": {
+      "shell": {
+        "executable": "${env:SHELL}",
+        "args": ["-c"]
+      }
+    }
+  },
+  "linux": {
+    "options": {
+      "shell": {
+        "executable": "${env:SHELL}",
+        "args": ["-c"]
+      }
+    }
+  },
+  "tasks": [
+    {
+      "label": "Create service run and build terminals",
+      "dependsOn": ["Create service run terminals", "Create build terminals"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Create service run terminals",
+      "dependsOn": ["Stats", "Queue", "Campaign Manager", "Config API"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Create build terminals",
+      "dependsOn": [
+        "TSC Watch Common",
+        "TSC Watch Services Common",
+        "TSC Watch Campaign Manager",
+        "TSC Watch Queue",
+        "TSC Watch Stats",
+        "TSC Watch Config API"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "Campaign Manager",
+      "type": "shell",
+      "command": "",
+      "options": {
+        "cwd": "services/navient-campaign-manager-service",
+        "shell": {
+          "executable": "${env:ComSpec}"
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "group": "service-run-group"
+      }
+    },
+    {
+      "label": "Queue",
+      "type": "shell",
+      "command": "",
+      "options": {
+        "cwd": "services/navient-queue-service",
+        "shell": {
+          "executable": "${env:ComSpec}",
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "group": "service-run-group"
+      }
+    },
+    {
+      "label": "Stats",
+      "type": "shell",
+      "command": "",
+      "options": {
+        "cwd": "services/navient-stats-service",
+        "shell": {
+          "executable": "${env:ComSpec}"
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "group": "service-run-group"
+      }
+    },
+    {
+      "label": "Config API",
+      "type": "shell",
+      "command": "",
+      "options": {
+        "cwd": "services/navient-config-api-service",
+        "shell": {
+          "executable": "${env:ComSpec}"
+        }
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "group": "config-api-group"
+      }
+    },
+    {
+      "label": "TSC Watch Common",
+      "type": "shell",
+      "command": "npm i && npm run watch",
+      "options": {
+        "cwd": "navient-common"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "group": "build-group"
+      }
+    },
+    {
+      "label": "TSC Watch Services Common",
+      "type": "shell",
+      "command": "npm i && npm run watch",
+      "options": {
+        "cwd": "services/navient-services-common"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "group": "build-group"
+      }
+    },
+    {
+      "label": "TSC Watch Campaign Manager",
+      "type": "shell",
+      "command": "npm i && npm run watch",
+      "options": {
+        "cwd": "services/navient-campaign-manager-service"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "group": "build-group"
+      }
+    },
+    {
+      "label": "TSC Watch Queue",
+      "type": "shell",
+      "command": "npm i && npm run watch",
+      "options": {
+        "cwd": "services/navient-queue-service"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "group": "build-group"
+      }
+    },
+    {
+      "label": "TSC Watch Stats",
+      "type": "shell",
+      "command": "npm i && npm run watch",
+      "options": {
+        "cwd": "services/navient-stats-service"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "group": "build-group"
+      }
+    },
+    {
+      "label": "TSC Watch Config API",
+      "type": "shell",
+      "command": "npm i && npm run watch",
+      "options": {
+        "cwd": "services/navient-config-api-service"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "group": "build-group"
+      }
+    }
+  ]
+}

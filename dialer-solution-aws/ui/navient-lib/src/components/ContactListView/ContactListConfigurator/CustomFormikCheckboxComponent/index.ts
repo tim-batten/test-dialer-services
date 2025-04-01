@@ -1,0 +1,1 @@
+export { CustomFormikCheckboxComponent } from './CustomFormikCheckboxComponent';
