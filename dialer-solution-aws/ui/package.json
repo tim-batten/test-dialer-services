@@ -1,0 +1,26 @@
+{
+  "name": "lcme",
+  "version": "1.7.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "common": "npm run dev --prefix ./lcme-lib",
+    "standalone": "npm run start --prefix ./lcme-web",
+    "web-start": "concurrently \"(npm run dev --prefix ./lcme-lib)\" \"(npm start --prefix ./lcme-web)\"",
+    "generate-all": "npm install --prefix ./lcme-lib --legacy-peer-deps && npm run build:dev --prefix ./lcme-lib && npm install --prefix ./lcme-web && npm run web-link",
+    "web-link": "cd lcme-lib && npm link ../lcme-web/node_modules/react",
+    "build": "npm run generate-all && npm run build --prefix ./lcme-web"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/jcahimat/lcme-plugin.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/jcahimat/lcme-plugin#readme",
+  "dependencies": {
+    "concurrently": "^6.4.0",
+    "wait-on": "^6.0.0"
+  }
+}

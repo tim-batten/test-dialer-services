@@ -1,0 +1,8 @@
+.DS_Store
+*.pfx
+*.yaml
+*.env
+node_modules/
+*.pem
+test-scripts
+web-ui

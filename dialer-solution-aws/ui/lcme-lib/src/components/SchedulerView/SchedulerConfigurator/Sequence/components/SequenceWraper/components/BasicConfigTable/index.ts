@@ -1,0 +1,1 @@
+export { BasicConfigTable } from './BasicConfigTable';

@@ -1,0 +1,28 @@
+// @ts-nocheck
+window.env = window.env || {};
+window.env.envConfig = {
+  "config": {
+    "apiUrl": "http://localhost:44444",
+    "logRefreshRate": 10000
+  },
+  "accounts": [
+    {
+      "url": "http://localhost:44444",
+      "name": "My first Connect account",
+      "shortCode": "ACC_1",
+      "color": "blue"
+    },
+    {
+      "url": "http://127.0.0.1:44445",
+      "name": "My second Connect account",
+      "shortCode": "ACC_2",
+      "color": "red"
+    }
+  ],
+  "amazonCognito": {
+    "region": "us-west-2",
+    "userPoolId": "INSERT_USER_POOL_ID_HERE",
+    "userPoolAppClientId": "INSERT_USER_POOL_APP_CLIENT_ID_HERE"
+  },
+  "basePath": "/web"
+}

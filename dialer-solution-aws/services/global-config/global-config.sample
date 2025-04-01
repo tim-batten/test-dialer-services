@@ -1,0 +1,579 @@
+# This is a global config file and can provide defaults for all services. It also has a section for each
+# service (e.g. campaignManagerService). Those sections are for specifying settings unique to that service,
+# however it is also possible to override the global settings within those sections (e.g. if the main
+# section of this file has "crudApi" and queueService has "crudApi", the queue service will use the
+# one specified in queueService)
+# If a service supplies its own config file, any duplicate sections will take precedence over anything in this file
+# For example, if the queue service has a config.yaml and sets the crudApi config,
+# it will completely override this config file's crudApi section
+
+# Note: This specifies the DB config, however all or part of it can be overridden by environment variables
+db:
+    host: "example.com"
+    port: 15453
+    username: "username"
+    password: "VerySecurePassword!"
+
+    # Prepends all keys with the value set in "namespace", e.g. my_namespace:schedule
+    # This is primarily for development purposes so that multiple instances can share a single
+    # Redis DB but with different configs
+    # MANDATORY
+    # namespace: "my_namespace"
+
+    # Prepends all stream names with streamPrefix, allows multiple services to use the same config
+    # without consuming each others events. Primarily for development purposes so that
+    # multiple services can share a config but run independently
+    # OPTIONAL
+    # streamPrefix: "my_stream"
+
+    # Determines if and how part of generated Redis keys are wrapped in {}, which is used by
+    # Redis to determine the hash slot.
+    # NONE - Disables this feature
+    # ENTITY_TYPE - Wraps the entity type in {} - eg. {schedule}:1
+    # NAMESPACE_AND_ENTITY_TYPE - Wraps the namespace (if set) and entity type in {} - eg. {my_namespace:schedule}:1
+    # Valid options: "NONE", "ENTITY_TYPE", "NAMESPACE_AND_ENTITY_TYPE"
+    # keyHashTagMode: "NONE"
+
+    # Determines the COUNT parameter when using SCAN to get keys in the DB. If set to 0,
+    # the Redis KEYS command will be used instead
+    # Key matching is generally not used in the services other than when patching the DB
+    # Default: 500
+    # OPTIONAL
+    # keyScanCount: 500
+
+    # The minimum number of redis clients that can exist in the client pool
+    # Default: 10
+    # OPTIONAL
+    # minClients: 10
+
+    # The maximum number of redis clients that can exist in the client pool
+    # Default: 100
+    # OPTIONAL
+    # maxClients: 100
+
+    # Specifies if the DB uses sharding
+    # If so some commands will use pipeline instead of multi
+    # Default: true
+    # OPTIONAL
+    # sharded: true
+
+# AWS Credentials
+# MANDATORY but can also be specified in env vars (see each var for equivalent name)
+# awsCredentials:
+    # AWS Access key ID
+    # MANDATORY
+    # ENV equivalent: AWS_ACCESS_KEY_ID
+    # accessKeyId: XXXXXXXXXXXXXXXXXXXX
+
+    # AWS Access key ID
+    # MANDATORY
+    # ENV equivalent: AWS_SECRET_ACCESS_KEY
+    # secretAccessKey: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+    # AWS session token (needed for short term credentials)
+    # OPTIONAL (depending on credentials type)
+    # ENV equivalent: AWS_SESSION_TOKEN
+    # sessionToken: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+# DB integrity check settings
+# OPTIONAL
+# dbIntegrityCheck:
+    # Whether or not to perform the integrity check on service startup
+    # Default is true
+    # enabled: true
+
+    # What to do when a key is found in the database that is not referenced in the key set
+    # (e.g. {namespace:campaign}:2 exists in the DB but {namespace:campaign}:2 is not in {namespace:campaign}.keys set)
+    # Possible values are:
+    # REINSTATE: Adds the unreferenced key back to the set
+    # DELETE: Deleted the unreferenced key data from the DB
+    # NONE: Does nothing
+    # Default is NONE
+    # unreferencedKeyBehaviour: "NONE"
+
+# Specifies cluster config
+# MANDATORY
+cluster:
+    # This is a label to give the service the service (used in redis keys). Multiple services can include the same label
+    # as their key is derived from the service type, label, and an atomic iteral identifier
+    # MANDATORY
+    serviceLabel: "service_instance"
+
+    # Determines the TTL for a service before it is considered "down" and its jobs are redistributed to other active services
+    # This MUST be higher than the heartbeat (it is recommended that it is at least double the heartbeat)
+    # This is specified in seconds or can be supplied as a human readable string in quotes (e.g. "1 minute")
+    # OPTIONAL
+    # Default is 60
+    # serviceTTL: 60
+
+    # Determines how frequently the service should send a heartbeat (refresh its expiration)
+    # This MUST be lower than the TTL (it is recommended that it is at least half of the TTL)
+    # This is specified in milliseconds or can be supplied as a human readable string in quotes (e.g. "5 seconds")
+    # OPTIONAL
+    # Default is 5000
+    # serviceHeartbeatFrequency: 5000
+
+    # Determines how frequently the service should check the status of other services of the same type
+    # This is specified in milliseconds or can be supplied as a human readable string in quotes (e.g. "5 seconds")
+    # OPTIONAL
+    # Default is 20000
+    serviceStatusMonitorFrequency: 20000
+
+# Sets up logging parameters
+# OPTIONAL
+# logging:
+    # The log level. Valid levels are currently:
+    # 'error', 'warn', 'data', 'info', 'debug'
+    # Default: "debug"
+    # logLevel: "debug"
+
+# Config for information about the server this service resides on
+# Used by REST to build publicAddress unless explicitly overridden in rest config
+# MANDATORY for config API, campaign manager and queue services
+server:
+    # The hostname of this system
+    # MANDATORY
+    hostname: "myserver"
+    
+# Config for the CRUD API
+# MANDATORY for most services
+crudApi:
+    # The address of lcme's CRUD API for fetching from the cache
+    # MANDATORY
+    crudApiUrl: "http://example.com"
+
+    # Specifies the IANA timezone of the CRUD server. This is used to ensure logic can be performed against dates 
+    # received from the service
+    # (e.g. when fetching records from the cache and their last callable time is set)
+    # OPTIONAL
+    # Default: America/New_York
+    # crudApiTimezone: "America/New_York"
+
+    
+# MANDATORY in some components
+apiCertificate:
+    # EITHER specify certificateFilename and certificatePassphrase or
+    # keyFilePath, certFilePath and certificateAuthorityFilePath
+
+    # Certificate filename with passphrase:
+
+    # Path to the certificate
+    # Note that this path is relative to the service directory
+    # certificateFilename: '../global-config/cert.pfx'
+    # MANDATORY if certificateFilename
+    # certificatePassphrase: 'certificate_passphrase'
+
+    # Key file, certificate file and certificate authority
+
+    # Path to key file
+    # keyFilePath: "/path/to/key.pem"
+    # Path to certificate file
+    # certFilePath: "/path/to/cert.pem"
+    # Path to certificate authority file 
+    # certificateAuthorityFilePath: "/path/to/ca.crt"
+
+# Settings specific to the campaign manager
+# - These will only be picked up by the campaign manager
+# - Options put in this section will override the globals defined above
+# Put any settings supported by the campaign manager here
+campaignManagerService:
+    # The campaign manager uses the following sections from the global config
+    # but they can be overridden in here if needed:
+    # db, apiCertificate
+
+    # Sets the parameters for Naveint's Cache build API
+    # MANDATORY
+    cacheApi:
+        # The URL to send cache build requests to
+        cacheApiUrl: "http://example.com"
+        cacheReleaseUrl: "http://example.com"
+    # The schedule service uses the following sections from the global config
+    # but they can be overridden in here if needed:
+    # db
+
+    # Used to send schedule execution information to the CRUD API
+    # MANDATORY:
+    crudApi:
+        crudApiUrl: "http://example.com"
+        appNameId: 16
+
+    # # Settings for the campaign event stream consumer group
+    # # This is entirely optional and mostly used for development purposes
+    # # This would NOT be used in a production environment
+    # # OPTIONAL
+    # campaignEventMonitor:
+    #     # Sets the consumer group name
+    #     # Default: campaign_event_group
+    #     # OPTIONAL
+    #     consumerGroup: "campaign_event_group"
+    #     # Sets the consumer ID when monitoring the stream
+    #     # Default: 1
+    #     #OPTIONAL
+    #     consumerId: 1
+
+    # Sets the amount of time schedule executions can remain in redis before their key is expired
+    # This is specified in seconds or can be supplied as a human readable string in quotes (e.g. "10 minutes")
+    # Default: 600
+    # OPTIONAL
+    scheduleExecutionExpiryOffset: 600
+
+    # Sets the amount of time campaign executions can remain in redis before their key is expired
+    # This is specified in seconds or can be supplied as a human readable string in quotes (e.g. "10 minutes")
+    # Default: 600
+    # OPTIONAL
+    campaignExecutionExpiryOffset: 600
+
+    # MANDATORY: For CRUD API requests to the schedule execution info endpoint:
+    scheduleServiceAppNameID: 16
+    # MANDATORY - Configures requests to Cache API.
+    cacheReleaseAppNameId: 3
+    cacheBuildAppNameId: 4
+
+    # Determines how long to wait for cache postbacks
+    # This is specified in milliseconds or can be supplied as a human readable string in quotes (e.g. "1 minute")
+    # Default: 120 seconds
+    # OPTIONAL
+    # postbackWaitWindow: "120 seconds"
+
+    # Configures how this service listens for cache build postbacks
+    # MANDATORY
+    rest:
+        # The address to supply the cache build API so it knows where to send the build complete request to
+        # (must be an address that the cache build API service can reach this service on)
+        publicAddress: "http://example.com"
+        # The port to listen on for postback requests.
+        # Note: The "postbackListenPort" and "postbackAddress" are independent of one another; if
+        # it is necessary for the postback to target a specific port, the port must be explicitly 
+        # set in the postbackAddress too
+        port: 33336
+        
+        # REST API HTTPS Credentials
+        # OPTIONAL
+        # httpsCredentials:
+            # keyFilePath: "/path/to/key.pem"
+            # certFilePath: "/path/to/cert.pem"
+        # isHttpEnabled: false
+
+    # # Dev config - not for production use
+    # # OPTIONAL
+    # dev:
+    #     # Skips sending of cache build requests and simulates a response
+    #     # OPTIONAL
+    #     skipCacheSend: false
+
+    # # Settings for the campaign control stream consumer group
+    # # This is entirely optional and mostly used for development purposes
+    # # This would NOTot be used in a production environment
+    # # OPTIONAL
+    # campaignControlMonitor:
+    #     # Sets the consumer group name
+    #     # Default: campaign_control_group
+    #     # OPTIONAL
+    #     consumerGroup: "campaign_control_group"
+    #     # Sets the consumer ID when monitoring the stream
+    #     # Default: 1
+    #     #OPTIONAL
+    #     consumerId: 1
+
+    # Settings for the queue event stream consumer group
+    # This is entirely optional and mostly used for development purposes
+    # This would NOT be used in a production environment
+    # OPTIONAL
+    # queueEventMonitor:
+    #     # Sets the consumer group name
+    #     # Default: queue_event_group
+    #     # OPTIONAL
+    #     consumerGroup: "queue_event_group"
+    #     # Sets the consumer ID when monitoring the stream
+    #     # Default: 1
+    #     #OPTIONAL
+    #     consumerId: 1
+
+# Settings specific to the config API
+# - These will only be picked up by the config API
+# - Options put in this section will override the globals defined above
+# Put any settings supported by the config API here
+configApiService:
+    # The config API uses the following sections from the global config
+    # but they can be overridden in here if needed:
+    # db, crudApi, apiCertificate
+
+    # Config for the REST API
+    # MANDATORY
+    rest:
+        # The port to listen on for HTTP requests
+        # MANDATORY
+        port: 44444
+        # REST API HTTPS Credentials
+        # OPTIONAL
+        # httpsCredentials:
+            # keyFilePath: "/path/to/key.pem"
+            # certFilePath: "/path/to/cert.pem"
+        # isHttpEnabled: false
+
+        # This is used to override the auto generated public address when generating the
+        # public address URL used by the WebUI to access the CRUD service. If you are not
+        # hosting the WebUI from the CRUD service, this is irrelevant.
+        # publicAddress: "http://example.com"
+        
+        # Config CORS
+        # OPTIONAL
+        # cors:    
+            # Sets origin in HTTP responses
+            # Default: *
+            # origin: *    
+
+    # Used to validate JWTs from Cognito
+
+    # Settings related to hosting the web UI from the API service
+    webUi:
+        # Enables or disables hosting the web UI from the API service
+        # Default: false
+        # enabled: false
+
+        # The path to the web UI source code
+        # Default: <lcme-config-api-service-source-dir>/web-ui
+        # sourcePath: /path/to/web-ui
+
+        # The URI path to serve the web UI from
+        # Default: /web
+        # uriPath: /web
+
+        # Whether to redirect the root path to the web UI
+        # e.g. if you go to localhost:44444, it will redirect to the webui
+        # Default: true
+        # redirectRootToWebUi: true
+
+        # How to handle the config.json file in the web UI source path
+        # generated: uses an auto generated config.json file
+        # merged: merge the generated version with the existing version. The existing env json takes
+        #        precedence and the generated one pushes the API URL to the top of the list
+        # file: use the existing version and do not generate a new one
+        # Default: generated
+        # configJsonMode: generated
+
+    # MANDATORY unless skipAuthCheck is set to true
+    cognito:
+        userPoolId: user_pool_id
+        userPoolClientId: user_pool_client_id
+
+    # MANDATORY - Configures requests to CRUD API.
+    configApiAppNameId: 5
+
+    # Settings related to schedule config
+    # OPTIONAL
+    # schedule:
+        # Specifies the date range to check for conflicts when adding, updating or enabling a schedule
+        # Be very careful about setting this number too high - for each schedule on the same campaign,
+        # the conflict check will have to check up to scheduleOverlapCheckRange^2 combinations
+        # Examples:
+        # | scheduleOverlapCheckRange | possible combinations per sched | possible combinations if 2 other schedules on same campaign |
+        # |           30              |        30^2=900                 |        1,800                                                |
+        # |           90              |        90^2=8,100               |        16,200                                               |
+        # |           365             |        365^2=133,225            |        266,450                                              |
+        # |           730             |        730^2=532,900            |        1,065,800                                            |
+        # Default: 30
+        # OPTIONAL
+        # scheduleOverlapCheckRange: 30
+
+    # Settings related to filter validation requests
+    # OPTIONAL
+    # filterValidation:
+        # userConcurrency and contactListConcurrency have the same settings and are used to
+        # control:
+        # a. Whether the concurrency lock is enabled
+        # b. The ttl of the lock
+        # If enabled, the config API service will only allow 1 concurrent filter validation check
+        # for the entity type, until either the validation check completes or the TTL expires
+
+        # Both are enabled by default
+        # Default TTL is 10 minutes as that is generally considered the maximum amount of time a filter
+        # validation check should take
+        
+        # Prevents users from having multiple simultaneous filter validation requests
+        # userConcurrency:
+            # enabled: true
+            # ttl: 600
+
+        # Prevents multiple filter validation requests against the same contact list
+        # contactListConcurrency:
+            # enabled: true
+            # ttl: 600
+
+    # Dev config
+    # Optional
+    # dev:
+        # Skips auth check (assumes all users are admin)
+        # OPTIONAL
+        # skipAuthCheck: false
+
+        # Sets a permanent "token" which can be used to hit the API as an admin
+        # Useful in test/dev env when you still want to be able to use the APIs programmatically
+        # OPTIONAL
+        # devAdminToken: my-secret-token
+
+        # Skips sending filter create/update/delete to remote service; only creates in Redis
+        # Skips sending phone number friendly name request
+        # OPTIONAL
+        # skiplcmeCrud: false
+
+        # Skips update conflict checks
+        # OPTIONAL
+        # skipUpdateConflictChecks: false
+
+        # Skips update conflict checks on specific entity types
+        # Example: skipUpdateConflictChecksOn: ['global', 'schedule'] skips update conflict checks on global config and schedule configs
+        # OPTIONAL
+        # skipUpdateConflictChecksOn: []
+
+        # Simulates a filter validation delay to make it easier to test conflicts
+        # This is specified in milliseconds or can be supplied as a human readable string in quotes (e.g. "1 minute")
+        # Default: 0
+        # OPTIONAL
+        # simulatedFilterValidationDelay: 0
+
+
+# Settings specific to the queue service
+# - These will only be picked up by the queue service
+# - Options put in this section will override the globals defined above
+# Put any settings supported by the queue service here
+queueService:     
+    # The queue service uses the following sections from the global config
+    # but they can be overridden in here if needed:
+    # db, crudApi, apiCertificate
+
+    # MANDATORY - Configures requests to CRUD API
+    cacheFetchAppNameId: 3
+
+    # Settings for interacting with the cache fetch API
+    # cacheFetch
+    # OPTIONAL
+
+        # How long to wait between retries if the cache fetch fails under retriable circumstances
+        # This is specified in milliseconds or can be supplied as a human readable string in quotes (e.g. "1 minute")
+        # Default: 1 minute
+        # OPTIONAL
+        # retryTimer: number = 60000
+
+        # Number of retry attempts before giving up and marking queue as complete, proceding to the next sequence
+        # Default: 3
+        # OPTIONAL
+        # maxRetries: number = 3
+
+    # # Settings for the queue event stream consumer group
+    # # This is entirely optional and mostly used for development purposes
+    # # This would NOT be used in a production environment
+    # # OPTIONAL
+    # queueControlMonitor:
+    #     # Sets the consumer group name
+    #     # Default: queue_control_group
+    #     # OPTIONAL
+    #     consumerGroup: "queue_control_group"
+    #     # Sets the consumer ID when monitoring the stream
+    #     # Default: 1
+    #     #OPTIONAL
+    #     consumerId: 1
+
+    # OPTIONAL
+    # queue:
+        # Sets how frequently the queue service performs its pacing calculations and queues records
+        # This is specified in milliseconds or can be supplied as a human readable string in quotes (e.g. "2 seconds")
+        # Default: 2000
+        # OPTIONAL
+        # enqueueFrequency
+
+        # Sets how frequently the queue service pulls records to dial from the queue
+        # This is specified in milliseconds or can be supplied as a human readable string in quotes (e.g. "2 seconds")
+        # Default: 2000
+        # OPTIONAL
+        # dequeueFreqency
+
+        # The amount of time to wait for a result from an outbound contact before it is mark as "no longer in flight"
+        # This is effectively a catch all
+        # This is specified in milliseconds or can be supplied as a human readable string in quotes (e.g. "10 minutes")
+        # OPTIONAL
+        # outboundContactResultWaitTime: 600000
+
+    # Flags affecting how outbound contacts are handled
+    # OPTIONAL
+    # outboundContacts:
+        # Batches processing of outbound contact completions to make more efficent use of redis clients
+        # If set to 0, deletions will be sent immediately
+        # Note that as this will impact the number of calls the services are aware of and may affect pacing, it is recommended
+        # not to set this any higher than the queueService's queue.enqueueFrequency
+        # This is specified in milliseconds or can be supplied as a human readable string in quotes (e.g. "1 second")
+        # Default: 500
+        # batchProcessOutboundContactCompletionFrequency: 500
+        
+    # Various dev flags - not used in production
+    # OPTIONAL
+    # dev:
+        # Skips fetching records from the cache service, simulating a response instead
+        # OPTIONAL
+        # skipCacheSend: false
+        # Skips contact outbound contact, generating a fake contact id and immediately completing the call
+        # OPTIONAL
+        # skipFlowExecution: false
+        # Limits the number of records to dial to 1 and only dials this number
+        # OPTIONAL
+        # destinationPhoneNumber: "12345"
+        # Limits total number of calls this service can place (useful for testing if you just want to place one call)
+        # OPTIONAL
+        # totalCallLimit: 1
+
+# Settings specific to the stats service
+# - These will only be picked up by the stats service
+# - Options put in this section will override the globals defined above
+# Put any settings supported by the stats service here
+statsService:
+    # The stats service uses the following sections from the global config
+    # but they can be overridden in here if needed:
+    # db
+
+    # # OPTIONAL
+    # stats:
+    #     # OPTIONAL
+    #     # Determines the number of milliseconds between each stats check for a TaskQueue 
+    #     statsCheckInterval: 5000
+    # # OPTIONAL
+    # campaignEventMonitor:
+    #     # Sets the consumer group name
+    #     # IMPORTANT: This MUST be different to other services campaign event monitor consumer groups
+    #     # Default: stats_campaign_event_group
+    #     # OPTIONAL
+    #     consumerGroup: "stats_campaign_event_group"
+    #     # Sets the consumer ID when monitoring the stream
+    #     # Default: 1
+    #     #OPTIONAL
+    #     consumerId: 1
+
+    # # OPTIONAL
+    # disposition:
+        # The amount of time to wait for a contact's disposition before writing to the disposition stream
+        # This is specified in milliseconds or can be supplied as a human readable string in quotes (e.g. "5 seconds")
+        # OPTIONAL
+        # Default: 60 minutes
+        # dispositionTimeout: 3600000
+
+        # How frequently the service checks the disposition set for expired contacts (contacts older than dispositionTimeout)
+        # and contacts that were set on the stats service before the queue service (rare, unlikely race condition)
+        # This is specified in milliseconds or can be supplied as a human readable string in quotes (e.g. "5 seconds")
+        # Contacts whose disposition info is filled when a DISCONNECT event comes in are processed immediately and are
+        # unaffected by this setting
+        # OPTIONAL
+        # Default: 5000
+        # dispositionCheckFrequency: 5000
+
+    # Configures how this service listens for contact events from Amazon Connect
+    # MANDATORY
+    rest:
+        # The port to listen to HTTP requests on
+        # MANDATORY
+        port: 33333
+
+        # REST API HTTPS Credentials
+        # OPTIONAL
+        # httpsCredentials:
+            # keyFilePath: "/path/to/key.pem"
+            # certFilePath: "/path/to/cert.pem"
+        # isHttpEnabled: false

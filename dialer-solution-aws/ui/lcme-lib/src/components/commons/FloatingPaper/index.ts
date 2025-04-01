@@ -1,0 +1,1 @@
+export { FloatingPaper } from './FloatingPaper';
